@@ -1,0 +1,49 @@
+{
+  "Fudge.ResourceFolder": {
+    "name": "Resources",
+    "entries": [
+      {
+        "name": "Graphs",
+        "entries": [
+          {
+            "name": "Car",
+            "entries": [
+              {
+                "idResource": "Graph|2025-11-10T09:22:24.400Z|34819"
+              },
+              {
+                "idResource": "Material|2025-11-10T10:04:31.187Z|66456"
+              },
+              {
+                "idResource": "Material|2025-11-10T10:05:16.995Z|16768"
+              },
+              {
+                "idResource": "MeshCube|2025-11-10T10:08:46.363Z|66766"
+              },
+              {
+                "idResource": "MeshGLTF|2025-11-10T09:40:32.103Z|35777"
+              }
+            ]
+          },
+          {
+            "name": "Road",
+            "entries": [
+              {
+                "idResource": "Graph|2025-11-10T09:22:17.908Z|73778"
+              },
+              {
+                "idResource": "MeshCube|2025-11-10T09:22:39.539Z|86810"
+              },
+              {
+                "idResource": "Material|2025-11-10T09:23:07.569Z|01235"
+              }
+            ]
+          },
+          {
+            "idResource": "Graph|2025-11-10T09:22:08.409Z|06309"
+          }
+        ]
+      }
+    ]
+  }
+}
