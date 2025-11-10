@@ -12,6 +12,8 @@ var Script;
             this.message = "CarController added to ";
             this.speed = 0;
             this.acceleration = 0.000001;
+            this.breakFactor = 0.7;
+            this.frictionFactor = 0.8;
             // Activate the functions of this component as response to events
             this.hndEvent = (_event) => {
                 switch (_event.type) {
@@ -34,25 +36,33 @@ var Script;
                 console.log(this.wheels);
             };
             this.update = (_event) => {
+                //speed
                 const transform = this.node.getComponent(ƒ.ComponentTransform);
                 if (Input.isInputPressed("accelerate")) {
-                    //console.log("a")
                     this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
-                    if (this.speed > 1) {
-                        this.speed = 1;
-                    }
                 }
                 else {
-                    this.speed -= 0.3 * ƒ.Loop.timeFrameReal / 1000;
-                    if (this.speed < 0) {
+                    if (Math.abs(this.speed) < 0.003) {
                         this.speed = 0;
                     }
                 }
+                if (this.speed != 0) {
+                    console.log(this.speed);
+                    if (Input.isInputPressed("break")) {
+                        this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+                    }
+                    else {
+                        this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+                    }
+                    if (Math.abs(this.speed) > 1) {
+                        this.speed = Math.sign(this.speed);
+                    }
+                }
+                //turning
                 const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
                 if (Math.abs(mouseDistanceToCenterX) > 50) {
                     if (this.speed != 0) {
                         let turnAngle = -0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100);
-                        console.log(turnAngle);
                         if (Math.abs(turnAngle) > 1) {
                             turnAngle = Math.sign(turnAngle);
                         }
@@ -60,13 +70,13 @@ var Script;
                     }
                     for (let i = 0; i < 2; i++) {
                         const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                        pivot.rotateX(Input.mouseDifference.x);
+                        pivot.rotateX(Input.mouseDifference.x / 2);
                     }
                 }
                 else {
                     for (let i = 0; i < 2; i++) {
                         const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                        pivot.rotateX(-pivot.rotation.x / 2);
+                        pivot.rotateX(-pivot.rotation.x / 3);
                     }
                 }
                 transform.mtxLocal.translateZ(this.speed);
@@ -173,6 +183,7 @@ var Input;
         { actionName: "right", key: "d" },
         { actionName: "accelerate", key: "w" },
         { actionName: "break", key: "s" },
+        { actionName: "reverse", key: " " }
     ];
 })(Input || (Input = {}));
 var Script;

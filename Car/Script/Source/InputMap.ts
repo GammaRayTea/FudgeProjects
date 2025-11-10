@@ -1,8 +1,9 @@
 namespace Input {
-    export const playerInputMap:Action[] = [
-        {actionName:"left", key:"a"},
-        {actionName:"right",key:"d"},
-        {actionName:"accelerate",key:"w"},
-        {actionName:"break",key:"s"},
+    export const playerInputMap: Action[] = [
+        { actionName: "left", key: "a" },
+        { actionName: "right", key: "d" },
+        { actionName: "accelerate", key: "w" },
+        { actionName: "break", key: "s" },
+        { actionName: "reverse", key: " "}
     ]
 }

@@ -4,8 +4,10 @@ declare namespace Script {
         static readonly iSubclass: number;
         message: string;
         private speed;
-        private readonly acceleration;
         private wheels;
+        private readonly acceleration;
+        private readonly breakFactor;
+        private readonly frictionFactor;
         constructor();
         hndEvent: (_event: Event) => void;
         setup: () => void;

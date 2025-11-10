@@ -1,3 +1,5 @@
+
+
 namespace Script {
   import ƒ = FudgeCore;
   ƒ.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
@@ -8,8 +10,13 @@ namespace Script {
     // Properties may be mutated by users in the editor via the automatically created user interface
     public message: string = "CarController added to ";
     private speed: number = 0;
-    private readonly acceleration: number = 0.000001;
+
     private wheels: ƒ.Node[];
+
+
+    private readonly acceleration: number = 0.000001;
+    private readonly breakFactor: number = 0.7;
+    private readonly frictionFactor: number = 0.8;
     constructor() {
       super();
 
@@ -45,28 +52,45 @@ namespace Script {
       console.log(this.wheels)
     }
     public update = (_event: Event): void => {
+      //speed
 
       const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
+
       if (Input.isInputPressed("accelerate")) {
-        //console.log("a")
         this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
-        if (this.speed > 1) {
-          this.speed = 1;
-        }
       }
       else {
-        this.speed -= 0.3 * ƒ.Loop.timeFrameReal / 1000;
-        if (this.speed < 0) {
+        if (Math.abs(this.speed) < 0.003) {
           this.speed = 0;
         }
       }
 
+
+      if (this.speed != 0) {
+
+        console.log(this.speed)
+
+        if (Input.isInputPressed("break")) {
+          this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+
+        }
+        else {
+          this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+        }
+
+
+
+        if (Math.abs(this.speed) > 1) {
+          this.speed = Math.sign(this.speed);
+        }
+      }
+
+      //turning
       const mouseDistanceToCenterX = Input.mouseCoordinates.x - viewport.canvas.width / 2
 
       if (Math.abs(mouseDistanceToCenterX) > 50) {
         if (this.speed != 0) {
           let turnAngle: number = - 0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100)
-          console.log(turnAngle)
           if (Math.abs(turnAngle) > 1) {
             turnAngle = Math.sign(turnAngle);
           }
@@ -74,13 +98,13 @@ namespace Script {
         }
         for (let i = 0; i < 2; i++) {
           const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-          pivot.rotateX(Input.mouseDifference.x)
+          pivot.rotateX(Input.mouseDifference.x / 2)
         }
       }
       else {
         for (let i = 0; i < 2; i++) {
           const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-          pivot.rotateX(-pivot.rotation.x / 2)
+          pivot.rotateX(-pivot.rotation.x / 3)
         }
       }
 
