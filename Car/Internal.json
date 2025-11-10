@@ -19,7 +19,7 @@
         },
         {
           "ƒ.Node": {
-            "name": "New Node",
+            "name": "AmbientLight",
             "active": true,
             "components": {
               "ComponentLight": [

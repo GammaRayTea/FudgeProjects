@@ -30,6 +30,8 @@ var Script;
                 }
             };
             this.setup = () => {
+                this.wheels = this.node.getChildren().slice(0, 4);
+                console.log(this.wheels);
             };
             this.update = (_event) => {
                 const transform = this.node.getComponent(ƒ.ComponentTransform);
@@ -46,10 +48,26 @@ var Script;
                         this.speed = 0;
                     }
                 }
-                if (Input.isInputJustPressed("left")) {
+                const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
+                if (Math.abs(mouseDistanceToCenterX) > 50) {
+                    if (this.speed != 0) {
+                        let turnAngle = -0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100);
+                        console.log(turnAngle);
+                        if (Math.abs(turnAngle) > 1) {
+                            turnAngle = Math.sign(turnAngle);
+                        }
+                        transform.mtxLocal.rotateY(turnAngle);
+                    }
+                    for (let i = 0; i < 2; i++) {
+                        const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                        pivot.rotateX(Input.mouseDifference.x);
+                    }
                 }
-                if (Input.mouseMoved && this.speed != 0) {
-                    transform.mtxLocal.rotateY(Input.mouseDifference.x / 4);
+                else {
+                    for (let i = 0; i < 2; i++) {
+                        const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                        pivot.rotateX(-pivot.rotation.x / 2);
+                    }
                 }
                 transform.mtxLocal.translateZ(this.speed);
             };
@@ -91,10 +109,13 @@ var Input;
         lastActiveActions = activeActions.slice(0, activeActions.length);
         if (Input.mouseMoved) {
             Input.mouseDifference = { x: Input.mouseCoordinates.x - Input.lastMouseCoords.x, y: Input.mouseCoordinates.y - Input.lastMouseCoords.y };
-            console.log(Input.mouseDifference);
+            //console.log(mouseDifference)
             Input.lastMouseCoords.x = Input.mouseCoordinates.x;
             Input.lastMouseCoords.y = Input.mouseCoordinates.y;
             Input.mouseMoved = false;
+        }
+        else {
+            Input.mouseDifference = { x: 0, y: 0 };
         }
     }
     Input.updateBuffer = updateBuffer;
@@ -158,10 +179,9 @@ var Script;
 (function (Script) {
     var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
-    let viewport;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
-        viewport = _event.detail;
+        Script.viewport = _event.detail;
         Input.setup(Input.playerInputMap);
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
         ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
@@ -169,7 +189,7 @@ var Script;
     function update(_event) {
         // ƒ.Physics.simulate();  // if physics is included and used
         Input.updateBuffer();
-        viewport.draw();
+        Script.viewport.draw();
         ƒ.AudioManager.default.update();
     }
 })(Script || (Script = {}));

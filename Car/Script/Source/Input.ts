@@ -8,7 +8,7 @@ namespace Input {
     const activeActions: Action[] = [];
     let lastActiveActions: Action[] = [];
     let inputMap: Action[];
-    
+
     interface Coordinates { x: number, y: number }
 
     export let mouseDifference: Coordinates = { x: 0, y: 0 };
@@ -41,11 +41,14 @@ namespace Input {
         lastActiveActions = activeActions.slice(0, activeActions.length);
         if (mouseMoved) {
             mouseDifference = { x: mouseCoordinates.x - lastMouseCoords.x, y: mouseCoordinates.y - lastMouseCoords.y }
-            console.log(mouseDifference)
+            //console.log(mouseDifference)
             lastMouseCoords.x = mouseCoordinates.x;
             lastMouseCoords.y = mouseCoordinates.y;
             mouseMoved = false;
-            
+
+        }
+        else {
+            mouseDifference = { x: 0, y: 0 }
         }
     }
 

@@ -5,6 +5,7 @@ declare namespace Script {
         message: string;
         private speed;
         private readonly acceleration;
+        private wheels;
         constructor();
         hndEvent: (_event: Event) => void;
         setup: () => void;
@@ -35,4 +36,6 @@ declare namespace Input {
     const playerInputMap: Action[];
 }
 declare namespace Script {
+    import ƒ = FudgeCore;
+    let viewport: ƒ.Viewport;
 }

@@ -9,7 +9,7 @@ namespace Script {
     public message: string = "CarController added to ";
     private speed: number = 0;
     private readonly acceleration: number = 0.000001;
-
+    private wheels: ƒ.Node[];
     constructor() {
       super();
 
@@ -41,9 +41,11 @@ namespace Script {
       }
     }
     public setup = (): void => {
-
+      this.wheels = this.node.getChildren().slice(0, 4);
+      console.log(this.wheels)
     }
     public update = (_event: Event): void => {
+
       const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
       if (Input.isInputPressed("accelerate")) {
         //console.log("a")
@@ -58,12 +60,30 @@ namespace Script {
           this.speed = 0;
         }
       }
-      if (Input.isInputJustPressed("left")) {
 
+      const mouseDistanceToCenterX = Input.mouseCoordinates.x - viewport.canvas.width / 2
+
+      if (Math.abs(mouseDistanceToCenterX) > 50) {
+        if (this.speed != 0) {
+          let turnAngle: number = - 0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100)
+          console.log(turnAngle)
+          if (Math.abs(turnAngle) > 1) {
+            turnAngle = Math.sign(turnAngle);
+          }
+          transform.mtxLocal.rotateY(turnAngle);
+        }
+        for (let i = 0; i < 2; i++) {
+          const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
+          pivot.rotateX(Input.mouseDifference.x)
+        }
       }
-      if (Input.mouseMoved && this.speed != 0) {
-        transform.mtxLocal.rotateY(Input.mouseDifference.x / 4);
+      else {
+        for (let i = 0; i < 2; i++) {
+          const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
+          pivot.rotateX(-pivot.rotation.x / 2)
+        }
       }
+
 
       transform.mtxLocal.translateZ(this.speed);
 
