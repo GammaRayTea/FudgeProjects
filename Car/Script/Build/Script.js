@@ -49,7 +49,7 @@ var Script;
                 if (Input.isInputJustPressed("left")) {
                 }
                 if (Input.mouseMoved && this.speed != 0) {
-                    transform.mtxLocal.rotateY(Input.mouseDifference.x / 10);
+                    transform.mtxLocal.rotateY(Input.mouseDifference.x / 4);
                 }
                 transform.mtxLocal.translateZ(this.speed);
             };
