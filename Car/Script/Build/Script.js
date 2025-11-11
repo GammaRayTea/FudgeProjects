@@ -37,49 +37,51 @@ var Script;
             };
             this.update = (_event) => {
                 //speed
-                const transform = this.node.getComponent(ƒ.ComponentTransform);
-                if (Input.isInputPressed("accelerate")) {
-                    this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
-                }
-                else {
-                    if (Math.abs(this.speed) < 0.003) {
-                        this.speed = 0;
-                    }
-                }
-                if (this.speed != 0) {
-                    console.log(this.speed);
-                    if (Input.isInputPressed("break")) {
-                        this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+                if (this.player) {
+                    const transform = this.node.getComponent(ƒ.ComponentTransform);
+                    if (Input.isInputPressed("accelerate")) {
+                        this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
                     }
                     else {
-                        this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
-                    }
-                    if (Math.abs(this.speed) > 1) {
-                        this.speed = Math.sign(this.speed);
-                    }
-                }
-                //turning
-                const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
-                if (Math.abs(mouseDistanceToCenterX) > 50) {
-                    if (this.speed != 0) {
-                        let turnAngle = -0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100);
-                        if (Math.abs(turnAngle) > 1) {
-                            turnAngle = Math.sign(turnAngle);
+                        if (Math.abs(this.speed) < 0.003) {
+                            this.speed = 0;
                         }
-                        transform.mtxLocal.rotateY(turnAngle);
                     }
-                    for (let i = 0; i < 2; i++) {
-                        const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                        pivot.rotateX(Input.mouseDifference.x / 2);
+                    if (this.speed != 0) {
+                        console.log(this.speed);
+                        if (Input.isInputPressed("break")) {
+                            this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+                        }
+                        else {
+                            this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+                        }
+                        if (Math.abs(this.speed) > 1) {
+                            this.speed = Math.sign(this.speed);
+                        }
                     }
+                    //turning
+                    const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
+                    if (Math.abs(mouseDistanceToCenterX) > 50) {
+                        if (this.speed != 0) {
+                            let turnAngle = -0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100);
+                            if (Math.abs(turnAngle) > 1) {
+                                turnAngle = Math.sign(turnAngle);
+                            }
+                            transform.mtxLocal.rotateY(turnAngle);
+                        }
+                        for (let i = 0; i < 2; i++) {
+                            const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                            pivot.rotateX(Input.mouseDifference.x / 2);
+                        }
+                    }
+                    else {
+                        for (let i = 0; i < 2; i++) {
+                            const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                            pivot.rotateX(-pivot.rotation.x / 3);
+                        }
+                    }
+                    transform.mtxLocal.translateZ(this.speed);
                 }
-                else {
-                    for (let i = 0; i < 2; i++) {
-                        const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                        pivot.rotateX(-pivot.rotation.x / 3);
-                    }
-                }
-                transform.mtxLocal.translateZ(this.speed);
             };
             // Don't start when running in editor
             if (ƒ.Project.mode == ƒ.MODE.EDITOR)
@@ -192,6 +194,7 @@ var Script;
     ƒ.Debug.info("Main Program Template running!");
     document.addEventListener("interactiveViewportStarted", start);
     const cars = [];
+    let currentPlayer;
     function start(_event) {
         Script.viewport = _event.detail;
         Input.setup(Input.playerInputMap);
@@ -218,7 +221,8 @@ var Script;
             Script.viewport.getBranch().addChild(car);
             cars.push(car);
         }
-        console.log(carRes);
+        currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length)];
+        console.log(currentPlayer);
     }
     function onClick(_event) {
         const ray = Script.viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
@@ -226,6 +230,9 @@ var Script;
             const distance = ray.getDistance(car.mtxWorld.translation);
             if ((distance.magnitude) < 1.5) {
                 console.log(distance.magnitude, car.name);
+                currentPlayer.getComponent(Script.CarController).player = false;
+                currentPlayer = car;
+                currentPlayer.getComponent(Script.CarController).player = true;
             }
         }
     }

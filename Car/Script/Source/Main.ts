@@ -5,6 +5,7 @@ namespace Script {
   export let viewport: ƒ.Viewport;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
   const cars: ƒ.Node[] = [];
+  let currentPlayer: ƒ.Node;
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
     Input.setup(Input.playerInputMap);
@@ -35,7 +36,9 @@ namespace Script {
       viewport.getBranch().addChild(car);
       cars.push(car)
     }
-    console.log(carRes);
+    currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length)];
+
+    console.log(currentPlayer);
   }
 
   function onClick(_event: MouseEvent): void {
@@ -45,6 +48,9 @@ namespace Script {
 
       if ((distance.magnitude) < 1.5) {
         console.log(distance.magnitude, car.name)
+        currentPlayer.getComponent(CarController).player = false
+        currentPlayer = car
+        currentPlayer.getComponent(CarController).player = true
       }
     }
   }
