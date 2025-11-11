@@ -2,11 +2,16 @@ namespace Script {
   import ƒ = FudgeCore;
   ƒ.Debug.info("Main Program Template running!");
 
-  export let viewport: ƒ.Viewport;
+  export let viewport: ƒ.Viewport = new ƒ.Viewport();
+
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
+
+
+
+
     Input.setup(Input.playerInputMap);
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
     viewport.addEventListener("mouseDown", onClick)
@@ -37,6 +42,6 @@ namespace Script {
   }
 
   function onClick(): void {
-    
+
   }
 }

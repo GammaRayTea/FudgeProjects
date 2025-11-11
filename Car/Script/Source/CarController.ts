@@ -60,12 +60,6 @@ namespace Script {
         if (Input.isInputPressed("accelerate")) {
           this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
         }
-        else {
-          if (Math.abs(this.speed) < 0.003) {
-            this.speed = 0;
-          }
-        }
-
 
 
 
@@ -101,7 +95,6 @@ namespace Script {
 
       }
       if (this.speed != 0) {
-
         this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
 
         if (Math.abs(this.speed) > 1) {
@@ -109,6 +102,9 @@ namespace Script {
         }
         transform.mtxLocal.translateZ(this.speed);
       }
+      if (Math.abs(this.speed) < 0.003) {
+            this.speed = 0;
+          }
     }
     // protected reduceMutator(_mutator: ƒ.Mutator): void {
     //   // delete properties that should not be mutated

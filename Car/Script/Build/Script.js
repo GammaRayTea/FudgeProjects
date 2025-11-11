@@ -42,11 +42,6 @@ var Script;
                     if (Input.isInputPressed("accelerate")) {
                         this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
                     }
-                    else {
-                        if (Math.abs(this.speed) < 0.003) {
-                            this.speed = 0;
-                        }
-                    }
                     //turning
                     const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
                     if (Math.abs(mouseDistanceToCenterX) > 50) {
@@ -78,6 +73,9 @@ var Script;
                         this.speed = Math.sign(this.speed);
                     }
                     transform.mtxLocal.translateZ(this.speed);
+                }
+                if (Math.abs(this.speed) < 0.003) {
+                    this.speed = 0;
                 }
             };
             // Don't start when running in editor
@@ -236,8 +234,10 @@ var Script;
     }
     function setPossessed(_car) {
         currentPlayer.getComponent(Script.CarController).possessed = false;
+        currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("white"));
         currentPlayer = _car;
         currentPlayer.getComponent(Script.CarController).possessed = true;
+        currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("red"));
     }
 })(Script || (Script = {}));
 var Script;

@@ -57,7 +57,9 @@ namespace Script {
   }
   function setPossessed(_car: ƒ.Node): void {
     currentPlayer.getComponent(CarController).possessed = false
+    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("white"))
     currentPlayer = _car
     currentPlayer.getComponent(CarController).possessed = true
+    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("red"))
   }
 }
