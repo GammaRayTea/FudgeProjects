@@ -76,13 +76,13 @@ namespace Script {
         }
         for (let i = 0; i < 2; i++) {
           const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-          pivot.rotateX(Input.mouseDifference.x / 2)
+          pivot.rotation = new ƒ.Vector3(-_mouseDistanceToCenterX / 10, pivot.rotation.y, pivot.rotation.z);
         }
       }
       else {
         for (let i = 0; i < 2; i++) {
           const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-          pivot.rotateX(-pivot.rotation.x / 3)
+          pivot.rotation = new ƒ.Vector3(_mouseDistanceToCenterX / 10, pivot.rotation.y, pivot.rotation.z)
         }
       }
     }
@@ -93,7 +93,7 @@ namespace Script {
 
     }
 
-    
+
     public decelerate(): void {
       const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
       if (this.speed != 0) {
@@ -108,7 +108,7 @@ namespace Script {
         this.speed = 0;
       }
     }
-    
+
     // protected reduceMutator(_mutator: ƒ.Mutator): void {
     //   // delete properties that should not be mutated
     //   // undefined properties and private fields (#) will not be included by default

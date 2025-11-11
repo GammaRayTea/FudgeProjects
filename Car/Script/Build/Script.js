@@ -61,13 +61,13 @@ var Script;
                 }
                 for (let i = 0; i < 2; i++) {
                     const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                    pivot.rotateX(Input.mouseDifference.x / 2);
+                    pivot.rotation = new ƒ.Vector3(-_mouseDistanceToCenterX / 10, pivot.rotation.y, pivot.rotation.z);
                 }
             }
             else {
                 for (let i = 0; i < 2; i++) {
                     const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                    pivot.rotateX(-pivot.rotation.x / 3);
+                    pivot.rotation = new ƒ.Vector3(_mouseDistanceToCenterX / 10, pivot.rotation.y, pivot.rotation.z);
                 }
             }
         }
