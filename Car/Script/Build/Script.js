@@ -77,7 +77,7 @@ var Script;
         decelerate() {
             const transform = this.node.getComponent(ƒ.ComponentTransform);
             if (this.speed != 0) {
-                this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+                this.speed -= this.speed * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
                 if (Math.abs(this.speed) > 1) {
                     this.speed = Math.sign(this.speed);
                 }
