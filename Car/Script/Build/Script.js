@@ -10,7 +10,7 @@ var Script;
             super();
             // Properties may be mutated by users in the editor via the automatically created user interface
             this.message = "CarController added to ";
-            this.player = false;
+            this.possessed = false;
             this.speed = 0;
             this.acceleration = 0.000001;
             this.breakFactor = 0.7;
@@ -37,26 +37,14 @@ var Script;
             };
             this.update = (_event) => {
                 //speed
-                if (this.player) {
-                    const transform = this.node.getComponent(ƒ.ComponentTransform);
+                const transform = this.node.getComponent(ƒ.ComponentTransform);
+                if (this.possessed) {
                     if (Input.isInputPressed("accelerate")) {
                         this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
                     }
                     else {
                         if (Math.abs(this.speed) < 0.003) {
                             this.speed = 0;
-                        }
-                    }
-                    if (this.speed != 0) {
-                        console.log(this.speed);
-                        if (Input.isInputPressed("break")) {
-                            this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
-                        }
-                        else {
-                            this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
-                        }
-                        if (Math.abs(this.speed) > 1) {
-                            this.speed = Math.sign(this.speed);
                         }
                     }
                     //turning
@@ -79,6 +67,15 @@ var Script;
                             const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
                             pivot.rotateX(-pivot.rotation.x / 3);
                         }
+                    }
+                    if (Input.isInputPressed("break")) {
+                        this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+                    }
+                }
+                if (this.speed != 0) {
+                    this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+                    if (Math.abs(this.speed) > 1) {
+                        this.speed = Math.sign(this.speed);
                     }
                     transform.mtxLocal.translateZ(this.speed);
                 }
@@ -221,20 +218,26 @@ var Script;
             Script.viewport.getBranch().addChild(car);
             cars.push(car);
         }
-        currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length)];
-        console.log(currentPlayer);
+        currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length - 1)];
+        setPossessed(currentPlayer);
+        console.log(currentPlayer.name);
     }
     function onClick(_event) {
-        const ray = Script.viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
-        for (const car of cars) {
-            const distance = ray.getDistance(car.mtxWorld.translation);
-            if ((distance.magnitude) < 1.5) {
-                console.log(distance.magnitude, car.name);
-                currentPlayer.getComponent(Script.CarController).player = false;
-                currentPlayer = car;
-                currentPlayer.getComponent(Script.CarController).player = true;
+        if (_event.button == 0) {
+            const ray = Script.viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
+            for (const car of cars) {
+                const distance = ray.getDistance(car.mtxWorld.translation);
+                if ((distance.magnitude) < 1.5) {
+                    console.log(distance.magnitude, car.name);
+                    setPossessed(car);
+                }
             }
         }
+    }
+    function setPossessed(_car) {
+        currentPlayer.getComponent(Script.CarController).possessed = false;
+        currentPlayer = _car;
+        currentPlayer.getComponent(Script.CarController).possessed = true;
     }
 })(Script || (Script = {}));
 var Script;

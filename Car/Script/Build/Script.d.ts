@@ -3,7 +3,7 @@ declare namespace Script {
     class CarController extends ƒ.ComponentScript {
         static readonly iSubclass: number;
         message: string;
-        player: boolean;
+        possessed: boolean;
         private speed;
         private wheels;
         private readonly acceleration;

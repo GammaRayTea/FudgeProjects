@@ -9,7 +9,7 @@ namespace Script {
     public static readonly iSubclass: number = ƒ.Component.registerSubclass(CarController);
     // Properties may be mutated by users in the editor via the automatically created user interface
     public message: string = "CarController added to ";
-    public player: boolean = false;
+    public possessed: boolean = false;
     private speed: number = 0;
 
     private wheels: ƒ.Node[];
@@ -53,8 +53,9 @@ namespace Script {
     }
     public update = (_event: Event): void => {
       //speed
-      if (this.player) {
-        const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
+      const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
+
+      if (this.possessed) {
 
         if (Input.isInputPressed("accelerate")) {
           this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
@@ -66,24 +67,7 @@ namespace Script {
         }
 
 
-        if (this.speed != 0) {
 
-          console.log(this.speed)
-
-          if (Input.isInputPressed("break")) {
-            this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
-
-          }
-          else {
-            this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
-          }
-
-
-
-          if (Math.abs(this.speed) > 1) {
-            this.speed = Math.sign(this.speed);
-          }
-        }
 
         //turning
         const mouseDistanceToCenterX = Input.mouseCoordinates.x - viewport.canvas.width / 2
@@ -108,9 +92,22 @@ namespace Script {
           }
         }
 
+        if (Input.isInputPressed("break")) {
+          this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
 
+        }
+
+
+
+      }
+      if (this.speed != 0) {
+
+        this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+
+        if (Math.abs(this.speed) > 1) {
+          this.speed = Math.sign(this.speed);
+        }
         transform.mtxLocal.translateZ(this.speed);
-
       }
     }
     // protected reduceMutator(_mutator: ƒ.Mutator): void {

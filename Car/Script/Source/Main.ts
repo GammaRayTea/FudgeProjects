@@ -36,22 +36,28 @@ namespace Script {
       viewport.getBranch().addChild(car);
       cars.push(car)
     }
-    currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length)];
-
-    console.log(currentPlayer);
+    currentPlayer = cars[ƒ.random.getRangeFloored(0, cars.length - 1)];
+    setPossessed(currentPlayer);
+    console.log(currentPlayer.name);
   }
 
   function onClick(_event: MouseEvent): void {
-    const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY))
-    for (const car of cars) {
-      const distance: ƒ.Vector3 = ray.getDistance(car.mtxWorld.translation);
+    if (_event.button == 0) {
 
-      if ((distance.magnitude) < 1.5) {
-        console.log(distance.magnitude, car.name)
-        currentPlayer.getComponent(CarController).player = false
-        currentPlayer = car
-        currentPlayer.getComponent(CarController).player = true
+      const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY))
+      for (const car of cars) {
+        const distance: ƒ.Vector3 = ray.getDistance(car.mtxWorld.translation);
+
+        if ((distance.magnitude) < 1.5) {
+          console.log(distance.magnitude, car.name)
+          setPossessed(car)
+        }
       }
     }
+  }
+  function setPossessed(_car: ƒ.Node): void {
+    currentPlayer.getComponent(CarController).possessed = false
+    currentPlayer = _car
+    currentPlayer.getComponent(CarController).possessed = true
   }
 }
