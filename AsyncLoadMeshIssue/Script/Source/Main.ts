@@ -4,12 +4,12 @@ namespace Script {
 
   export let viewport: ƒ.Viewport;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
-  const cars: ƒ.Node[] = [];
+
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
     Input.setup(Input.playerInputMap);
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-    document.addEventListener("mousedown", onClick);
+    viewport.addEventListener("mouseDown", onClick)
     ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     spawnRandomCars();
   }
@@ -21,31 +21,22 @@ namespace Script {
     ƒ.AudioManager.default.update();
   }
   async function spawnRandomCars(): Promise<void> {
-    const corner0: ƒ.Vector3 = new ƒ.Vector3(-10, 0, -10);
-    const corner1: ƒ.Vector3 = new ƒ.Vector3(10, 0, 10);
+    const corner0: ƒ.Vector3 = new ƒ.Vector3(-100, 0, -100);
+    const corner1: ƒ.Vector3 = new ƒ.Vector3(100, 0, 100);
 
     const carRes: ƒ.SerializableResource = await ƒ.Project.getResource("Graph|2025-11-10T09:22:24.400Z|34819");
 
     for (let i = 0; i < 10; i++) {
       const vector: ƒ.Vector3 = ƒ.random.getVector3(corner0, corner1);
-      const car: ƒ.GraphInstance = await ƒ.Project.createGraphInstance(carRes as ƒ.Graph);
+      const car: ƒ.GraphInstance = await ƒ.Project.createGraphInstance(carRes as ƒ.Graph)
 
       car.mtxLocal.translate(vector);
-      car.name = "Car" + i.toString()
-      viewport.getBranch().addChild(car);
-      cars.push(car)
+      viewport.getBranch().addChild(car)
     }
-    console.log(carRes);
+    console.log(carRes)
   }
 
-  function onClick(_event: MouseEvent): void {
-    const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY))
-    for (const car of cars) {
-      const distance: ƒ.Vector3 = ray.getDistance(car.cmpTransform.mtxLocal.translation);
-
-      if ((distance.magnitude) < 1.5) {
-        console.log(distance.magnitude, car.name)
-      }
-    }
+  function onClick(): void {
+    
   }
 }

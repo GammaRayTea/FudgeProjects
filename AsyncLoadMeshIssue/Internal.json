@@ -3,12 +3,27 @@
     "ƒ.Graph": {
       "name": "Main",
       "active": true,
-      "components": {},
+      "components": {
+        "RandomCars": [
+          {
+            "Script.RandomCars": {
+              "active": true,
+              "message": "RandomCars added to "
+            }
+          }
+        ]
+      },
       "children": [
         {
           "ƒ.GraphInstance": {
             "deserializeFromSource": true,
             "idSource": "Graph|2025-11-10T09:22:17.908Z|73778"
+          }
+        },
+        {
+          "ƒ.GraphInstance": {
+            "deserializeFromSource": true,
+            "idSource": "Graph|2025-11-10T09:22:24.400Z|34819"
           }
         },
         {

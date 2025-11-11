@@ -191,12 +191,11 @@ var Script;
     var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
     document.addEventListener("interactiveViewportStarted", start);
-    const cars = [];
     function start(_event) {
         Script.viewport = _event.detail;
         Input.setup(Input.playerInputMap);
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        document.addEventListener("mousedown", onClick);
+        Script.viewport.addEventListener("mouseDown", onClick);
         ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
         spawnRandomCars();
     }
@@ -207,27 +206,18 @@ var Script;
         ƒ.AudioManager.default.update();
     }
     async function spawnRandomCars() {
-        const corner0 = new ƒ.Vector3(-10, 0, -10);
-        const corner1 = new ƒ.Vector3(10, 0, 10);
+        const corner0 = new ƒ.Vector3(-100, 0, -100);
+        const corner1 = new ƒ.Vector3(100, 0, 100);
         const carRes = await ƒ.Project.getResource("Graph|2025-11-10T09:22:24.400Z|34819");
         for (let i = 0; i < 10; i++) {
             const vector = ƒ.random.getVector3(corner0, corner1);
             const car = await ƒ.Project.createGraphInstance(carRes);
             car.mtxLocal.translate(vector);
-            car.name = "Car" + i.toString();
             Script.viewport.getBranch().addChild(car);
-            cars.push(car);
         }
         console.log(carRes);
     }
-    function onClick(_event) {
-        const ray = Script.viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
-        for (const car of cars) {
-            const distance = ray.getDistance(car.cmpTransform.mtxLocal.translation);
-            if ((distance.magnitude) < 1.5) {
-                console.log(distance.magnitude, car.name);
-            }
-        }
+    function onClick() {
     }
 })(Script || (Script = {}));
 var Script;
@@ -258,9 +248,9 @@ var Script;
                 }
             };
             this.spawnRandomCars = async () => {
-                // const corner0: ƒ.Vector3 = new ƒ.Vector3(-100, 0, -100);
-                // const corner1: ƒ.Vector3 = new ƒ.Vector3(100, 0, 100);
-                // const carRes: ƒ.SerializableResource = await ƒ.Project.getResource("Graph|2025-11-10T09:22:24.400Z|34819");
+                const corner0 = new ƒ.Vector3(-100, 0, -100);
+                const corner1 = new ƒ.Vector3(100, 0, 100);
+                const carRes = await ƒ.Project.getResource("Graph|2025-11-10T09:22:24.400Z|34819");
                 //     for (let i = 0; i <10; i++) {
                 //         const vector: ƒ.Vector3 = ƒ.random.getVector3(corner0, corner1);
                 //         const car: ƒ.GraphInstance = await ƒ.Project.createGraphInstance(carRes as ƒ.Graph)
