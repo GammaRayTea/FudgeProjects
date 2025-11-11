@@ -41,7 +41,7 @@ namespace Script {
   function onClick(_event: MouseEvent): void {
     const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY))
     for (const car of cars) {
-      const distance: ƒ.Vector3 = ray.getDistance(car.cmpTransform.mtxLocal.translation);
+      const distance: ƒ.Vector3 = ray.getDistance(car.mtxWorld.translation);
 
       if ((distance.magnitude) < 1.5) {
         console.log(distance.magnitude, car.name)

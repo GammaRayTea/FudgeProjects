@@ -223,7 +223,7 @@ var Script;
     function onClick(_event) {
         const ray = Script.viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
         for (const car of cars) {
-            const distance = ray.getDistance(car.cmpTransform.mtxLocal.translation);
+            const distance = ray.getDistance(car.mtxWorld.translation);
             if ((distance.magnitude) < 1.5) {
                 console.log(distance.magnitude, car.name);
             }
