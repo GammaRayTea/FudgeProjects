@@ -13,6 +13,10 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
         setup: () => void;
         update: (_event: Event) => void;
+        accelerate(): void;
+        turn(_mouseDistanceToCenterX: number): void;
+        break(): void;
+        decelerate(): void;
     }
 }
 declare namespace Input {

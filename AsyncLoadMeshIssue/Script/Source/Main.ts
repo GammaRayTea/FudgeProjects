@@ -36,7 +36,7 @@ namespace Script {
       const car: ƒ.GraphInstance = await ƒ.Project.createGraphInstance(carRes as ƒ.Graph)
 
       car.mtxLocal.translate(vector);
-      viewport.getBranch().addChild(car)
+      viewport.getBranch().addChild(car);
     }
     console.log(carRes)
   }

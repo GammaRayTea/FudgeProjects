@@ -51,49 +51,51 @@ namespace Script {
     public setup = (): void => {
       this.wheels = this.node.getChildren().slice(0, 4);
     }
+
+
     public update = (_event: Event): void => {
-      //speed
+      this.decelerate();
+
+    }
+
+
+    public accelerate(): void {
+      this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
+    }
+
+
+    public turn(_mouseDistanceToCenterX: number): void {
       const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
-
-      if (this.possessed) {
-
-        if (Input.isInputPressed("accelerate")) {
-          this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
-        }
-
-
-
-        //turning
-        const mouseDistanceToCenterX = Input.mouseCoordinates.x - viewport.canvas.width / 2
-
-        if (Math.abs(mouseDistanceToCenterX) > 50) {
-          if (this.speed != 0) {
-            let turnAngle: number = - 0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100)
-            if (Math.abs(turnAngle) > 1) {
-              turnAngle = Math.sign(turnAngle);
-            }
-            transform.mtxLocal.rotateY(turnAngle);
+      if (Math.abs(_mouseDistanceToCenterX) > 50) {
+        if (this.speed != 0) {
+          let turnAngle: number = - 0.003 * (_mouseDistanceToCenterX - Math.sign(_mouseDistanceToCenterX) * 100)
+          if (Math.abs(turnAngle) > 1) {
+            turnAngle = Math.sign(turnAngle);
           }
-          for (let i = 0; i < 2; i++) {
-            const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-            pivot.rotateX(Input.mouseDifference.x / 2)
-          }
+          transform.mtxLocal.rotateY(turnAngle);
         }
-        else {
-          for (let i = 0; i < 2; i++) {
-            const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
-            pivot.rotateX(-pivot.rotation.x / 3)
-          }
+        for (let i = 0; i < 2; i++) {
+          const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
+          pivot.rotateX(Input.mouseDifference.x / 2)
         }
-
-        if (Input.isInputPressed("break")) {
-          this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
-
-        }
-
-
-
       }
+      else {
+        for (let i = 0; i < 2; i++) {
+          const pivot: ƒ.Matrix4x4 = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot
+          pivot.rotateX(-pivot.rotation.x / 3)
+        }
+      }
+    }
+
+
+    public break(): void {
+      this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+
+    }
+
+    
+    public decelerate(): void {
+      const transform: ƒ.ComponentTransform = this.node.getComponent(ƒ.ComponentTransform)
       if (this.speed != 0) {
         this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
 
@@ -102,10 +104,11 @@ namespace Script {
         }
         transform.mtxLocal.translateZ(this.speed);
       }
-      if (Math.abs(this.speed) < 0.003) {
-            this.speed = 0;
-          }
+      if (Math.abs(this.speed) < 0.0003) {
+        this.speed = 0;
+      }
     }
+    
     // protected reduceMutator(_mutator: ƒ.Mutator): void {
     //   // delete properties that should not be mutated
     //   // undefined properties and private fields (#) will not be included by default

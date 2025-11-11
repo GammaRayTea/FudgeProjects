@@ -20,7 +20,28 @@ namespace Script {
     Input.updateBuffer();
     viewport.draw();
     ƒ.AudioManager.default.update();
+
+    pollCarInput()
+
+
   }
+
+
+  function pollCarInput(): void {
+    const controller: CarController = currentPlayer.getComponent(CarController);
+    if (Input.isInputPressed("accelerate")) {
+      controller.accelerate();
+    }
+    const mouseDistanceToCenterX = Input.mouseCoordinates.x - viewport.canvas.width / 2;
+
+    if (Math.abs(mouseDistanceToCenterX) > 50) {
+      controller.turn(mouseDistanceToCenterX);
+    }
+    if (Input.isInputPressed("break")) {
+      controller.break();
+    }
+  }
+
   async function spawnRandomCars(): Promise<void> {
     const corner0: ƒ.Vector3 = new ƒ.Vector3(-10, 0, -10);
     const corner1: ƒ.Vector3 = new ƒ.Vector3(10, 0, 10);
@@ -32,7 +53,7 @@ namespace Script {
       const car: ƒ.GraphInstance = await ƒ.Project.createGraphInstance(carRes as ƒ.Graph);
 
       car.mtxLocal.translate(vector);
-      car.name = "Car" + i.toString()
+      car.name = "Car" + i.toString();
       viewport.getBranch().addChild(car);
       cars.push(car)
     }
@@ -44,22 +65,22 @@ namespace Script {
   function onClick(_event: MouseEvent): void {
     if (_event.button == 0) {
 
-      const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY))
+      const ray: ƒ.Ray = viewport.getRayFromClient(new ƒ.Vector2(_event.clientX, _event.clientY));
       for (const car of cars) {
         const distance: ƒ.Vector3 = ray.getDistance(car.mtxWorld.translation);
 
         if ((distance.magnitude) < 1.5) {
-          console.log(distance.magnitude, car.name)
-          setPossessed(car)
+          console.log(distance.magnitude, car.name);
+          setPossessed(car);
         }
       }
     }
   }
   function setPossessed(_car: ƒ.Node): void {
-    currentPlayer.getComponent(CarController).possessed = false
-    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("white"))
-    currentPlayer = _car
-    currentPlayer.getComponent(CarController).possessed = true
-    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("red"))
+    currentPlayer.getComponent(CarController).possessed = false;
+    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("white"));
+    currentPlayer = _car;
+    currentPlayer.getComponent(CarController).possessed = true;
+    currentPlayer.getChildByName("Body").getComponent(ƒ.ComponentMaterial).clrPrimary = (ƒ.Color.CSS("red"));
   }
 }

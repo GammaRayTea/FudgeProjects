@@ -36,47 +36,7 @@ var Script;
                 this.wheels = this.node.getChildren().slice(0, 4);
             };
             this.update = (_event) => {
-                //speed
-                const transform = this.node.getComponent(ƒ.ComponentTransform);
-                if (this.possessed) {
-                    if (Input.isInputPressed("accelerate")) {
-                        this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
-                    }
-                    //turning
-                    const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
-                    if (Math.abs(mouseDistanceToCenterX) > 50) {
-                        if (this.speed != 0) {
-                            let turnAngle = -0.003 * (mouseDistanceToCenterX - Math.sign(mouseDistanceToCenterX) * 100);
-                            if (Math.abs(turnAngle) > 1) {
-                                turnAngle = Math.sign(turnAngle);
-                            }
-                            transform.mtxLocal.rotateY(turnAngle);
-                        }
-                        for (let i = 0; i < 2; i++) {
-                            const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                            pivot.rotateX(Input.mouseDifference.x / 2);
-                        }
-                    }
-                    else {
-                        for (let i = 0; i < 2; i++) {
-                            const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
-                            pivot.rotateX(-pivot.rotation.x / 3);
-                        }
-                    }
-                    if (Input.isInputPressed("break")) {
-                        this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
-                    }
-                }
-                if (this.speed != 0) {
-                    this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
-                    if (Math.abs(this.speed) > 1) {
-                        this.speed = Math.sign(this.speed);
-                    }
-                    transform.mtxLocal.translateZ(this.speed);
-                }
-                if (Math.abs(this.speed) < 0.003) {
-                    this.speed = 0;
-                }
+                this.decelerate();
             };
             // Don't start when running in editor
             if (ƒ.Project.mode == ƒ.MODE.EDITOR)
@@ -85,6 +45,47 @@ var Script;
             this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        accelerate() {
+            this.speed += this.acceleration * ƒ.Loop.timeFrameReal / 10000;
+        }
+        turn(_mouseDistanceToCenterX) {
+            const transform = this.node.getComponent(ƒ.ComponentTransform);
+            if (Math.abs(_mouseDistanceToCenterX) > 50) {
+                if (this.speed != 0) {
+                    let turnAngle = -0.003 * (_mouseDistanceToCenterX - Math.sign(_mouseDistanceToCenterX) * 100);
+                    if (Math.abs(turnAngle) > 1) {
+                        turnAngle = Math.sign(turnAngle);
+                    }
+                    transform.mtxLocal.rotateY(turnAngle);
+                }
+                for (let i = 0; i < 2; i++) {
+                    const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                    pivot.rotateX(Input.mouseDifference.x / 2);
+                }
+            }
+            else {
+                for (let i = 0; i < 2; i++) {
+                    const pivot = this.wheels[i].getComponent(ƒ.ComponentMesh).mtxPivot;
+                    pivot.rotateX(-pivot.rotation.x / 3);
+                }
+            }
+        }
+        break() {
+            this.speed -= Math.sign(this.speed) * this.breakFactor * ƒ.Loop.timeFrameReal / 1000;
+        }
+        decelerate() {
+            const transform = this.node.getComponent(ƒ.ComponentTransform);
+            if (this.speed != 0) {
+                this.speed -= this.speed * Math.sign(this.speed) * this.frictionFactor * ƒ.Loop.timeFrameReal / 1000;
+                if (Math.abs(this.speed) > 1) {
+                    this.speed = Math.sign(this.speed);
+                }
+                transform.mtxLocal.translateZ(this.speed);
+            }
+            if (Math.abs(this.speed) < 0.0003) {
+                this.speed = 0;
+            }
         }
     }
     Script.CarController = CarController;
@@ -203,6 +204,20 @@ var Script;
         Input.updateBuffer();
         Script.viewport.draw();
         ƒ.AudioManager.default.update();
+        pollCarInput();
+    }
+    function pollCarInput() {
+        const controller = currentPlayer.getComponent(Script.CarController);
+        if (Input.isInputPressed("accelerate")) {
+            controller.accelerate();
+        }
+        const mouseDistanceToCenterX = Input.mouseCoordinates.x - Script.viewport.canvas.width / 2;
+        if (Math.abs(mouseDistanceToCenterX) > 50) {
+            controller.turn(mouseDistanceToCenterX);
+        }
+        if (Input.isInputPressed("break")) {
+            controller.break();
+        }
     }
     async function spawnRandomCars() {
         const corner0 = new ƒ.Vector3(-10, 0, -10);
